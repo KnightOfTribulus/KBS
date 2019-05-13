@@ -124,5 +124,11 @@
   <ItemGroup>
     <Content Include="Images\backRule.bmp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Inference\Inference.fsproj">
+      <Project>{304484e4-8ef1-4bc9-aa5e-73f57d90fd77}</Project>
+      <Name>Inference</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

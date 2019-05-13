@@ -1,16 +1,21 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
+
 
 namespace SBKInterface
 {
     class RuleTextPanelPreset
     {
+        //static List<string> a1 = new List<string> { "aaaa", null, "aaaa", "aaaa", null, "aaaa", "aaaa", "aaaa", "aaaa" };
+        //static List<string> a2 = new List<string> { "aaaa", null, "aaaa", "aaaa", null, "aaaa", "aaaa", "aaaa", "aaaa" };
+        //static List<string> c1 = new List<string> { "aaaa", "aaa", "aaaa" };
+        //static List<string> c2 = new List<string> { "aaaa", "aaa", "aaaa" };
 
+        //Inference.Inference.Mechanism m = new Inference.Inference.Mechanism(a1, a2, c1, c2);
         public TableLayoutPanel Table { get; } = new TableLayoutPanel()
         {
-            Size = new Size(200,100),
+            Size = new Size(200, 100),
             ColumnCount = 1,
             RowCount = 2,
             BackColor = SystemColors.ControlLight
