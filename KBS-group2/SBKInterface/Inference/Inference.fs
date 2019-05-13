@@ -93,9 +93,9 @@
                     match queue with 
                     | head::tail -> 
                         match analyzeFact head table with
-                        | true, Some rule -> infer tail (List.map (fun f -> if f.variable = rule.cons.variable then rule.cons else f) table) (Some (rule.cons.variable + "-" + rule.cons.value))
+                        | true, Some rule -> infer (tail @ [rule.cons]) (List.map (fun f -> if f.variable = rule.cons.variable then rule.cons else f) table) (Some (rule.cons.variable + "-" + rule.cons.value))
                         | false, Some rule -> Some (rule.cons.variable + "-" + rule.cons.value)
-                        | _ -> None
+                        | _ -> result
                     | [] -> result
                         
                 infer initial_facts initial_table None
