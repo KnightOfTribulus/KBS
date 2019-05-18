@@ -1,0 +1,40 @@
+foreach (List<Tree> i in a)
+            {
+                int count = 0;
+                foreach (Tree j in i)
+                {
+                    if (j.Text != null)
+                    {
+                        
+                        if (j.IsClause == true)
+                        {
+                            count += 1;
+                            if ((count%3 == 0) && (count != 0))
+                            {
+                                id_antisidenti.Add("итог");
+                                var_antisidenti.Add("промежуточный");
+                            }
+
+                            string[] tmp = j.Text.Split('-');
+
+                            id_konsikventi.Add(tmp[0]);
+                            var_konsikventi.Add(tmp[1]);
+                        }
+                        else
+                        {   
+                            while(count%3 != 0)
+                            {
+                                id_konsikventi.Add(null);
+                                var_konsikventi.Add(null);
+                                count += 1;
+                            }
+                            count = 0;
+                            string[] tmp = j.Text.Split('-');
+                            id_antisidenti.Add(tmp[0]);
+                            var_antisidenti.Add(tmp[1]);
+                            
+                        }    
+                    }
+                    
+                }
+            }
