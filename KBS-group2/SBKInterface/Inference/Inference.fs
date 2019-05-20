@@ -48,23 +48,26 @@
                         
             let ConsIDs = consIds |> Seq.toList
             let ConsVals = consVals |> Seq.toList                       
-
+            
             let RulesSeq =
                 seq{
-                    for triple_ind in [0..antId_Triples.Length] do 
+                    for triple_ind in [0..antId_Triples.Length-1] do 
                         let FactsSeq =                             
                             seq{
-                                for ind in [0..2] do
+                                for ind in [0..antId_Triples.[triple_ind].Length-1] do
                                     match antId_Triples.[triple_ind].[ind] with
                                     | null -> yield None 
                                     | _ -> yield Some {variable = antId_Triples.[triple_ind].[ind]; value = antVal_Triples.[triple_ind].[ind]}                                        
                             }
                         let FactsList = FactsSeq |> Seq.toList
                         let conseq = {variable = ConsIDs.[triple_ind]; value = ConsVals.[triple_ind]}
-                        yield {ant1 = FactsList.[0]; ant2 = FactsList.[1]; ant3 = FactsList.[2]; cons = conseq}
+
+                        if FactsList.Length = 3 then yield {ant1 = FactsList.[0]; ant2 = FactsList.[1]; ant3 = FactsList.[2]; cons = conseq}
+                        elif FactsList.Length = 2 then yield {ant1 = FactsList.[0]; ant2 = FactsList.[1]; ant3 = None; cons = conseq}
+                        else yield {ant1 = FactsList.[0]; ant2 = None; ant3 = None; cons = conseq}
                 }
             let activatedRules = new List<Rule>()
-            //inner functions   
+            //inner functions       
             let CreateFacts (ids : string seq) (vals : string seq) =
                 let IDs = ids |> Seq.toList
                 let VALs = vals |> Seq.toList
@@ -75,9 +78,19 @@
                     }
                 Seq.toList FactSeq
             
+            let ParseToFacts (input : string) =
+                let splitters = Array.create 1 "\n" 
+                let innerSplitters = Array.create 1 "-"
+                let splitOps = System.StringSplitOptions.RemoveEmptyEntries
 
+                let facts = 
+                    input.Split(splitters, splitOps)
+                    |> Array.map(fun s -> s.Split(innerSplitters, splitOps))
+                    |> Array.map(fun pair -> {variable = pair.[0]; value = pair.[1]})
+                    |> Array.toList                    
+                facts                   //return value
 
-            member public __.Infer(ids : string seq, vals : string seq) =                
+            member public __.Infer(ids : string seq, vals : string seq) =      //bad parameters, 2 strings parsing          
                 let rules = Seq.toList RulesSeq
                 let initial_facts = CreateFacts ids vals                
                 let initial_table = initial_facts                                
@@ -101,4 +114,32 @@
                 infer initial_facts initial_table None
                 |> Option.defaultValue defaultInference
                 
-            
+            member public __.Infer(input : string) =    //bad parameters, 1 string parsing
+                let rules = Seq.toList RulesSeq
+                let initial_facts = ParseToFacts input                
+                let initial_table = ParseToFacts input
+
+                let analyzeFact fact allfacts=                      
+                    match rules |> List.tryFind(fun r -> r.IsActiveAt fact allfacts) with 
+                    |Some rule -> 
+                        activatedRules.Add(rule)
+                        (List.contains rule.cons allfacts, Some rule)
+                    |None -> (false, None)
+                                            
+                let rec infer (queue: Fact list) table result = 
+                    match queue with 
+                    | head::tail -> 
+                        match analyzeFact head table with
+                        | true, Some rule -> infer (tail @ [rule.cons]) (List.map (fun f -> if f.variable = rule.cons.variable then rule.cons else f) table) (Some (rule.cons.variable + "-" + rule.cons.value))
+                        | false, Some rule -> Some (rule.cons.variable + "-" + rule.cons.value)
+                        | _ -> result
+                    | [] -> result
+                        
+                infer initial_facts initial_table None
+                |> Option.defaultValue defaultInference
+
+    
+        let public MakeInference(facts: string, antIds : string seq, antVals : string seq, consIds : string seq, consVals : string seq) =
+            let mech = new Mechanism(antIds, antVals, consIds, consVals)
+            let result = mech.Infer(facts)
+            result

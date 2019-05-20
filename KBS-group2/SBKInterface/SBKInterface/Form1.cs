@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 
 namespace SBKInterface
 {
@@ -588,6 +589,24 @@ namespace SBKInterface
 
             alreadyClicked = true;
         }
+        //КОСТЫЛЬ для базы знаний:
+        public List<string> id_konsikventi { get; set; }
+        public List<string> var_konsikventi { get; set; }
+        public List<string> id_antisidenti { get; set; }
+        public List<string> var_antisidenti { get; set; }
+
+        public void SaveRules()
+        {
+            var toSave = new List<List<string>>();
+            toSave.Add(id_antisidenti);
+            toSave.Add(var_antisidenti);
+            toSave.Add(id_konsikventi);
+            toSave.Add(var_konsikventi);
+            var json = JsonConvert.SerializeObject(toSave, Formatting.Indented);
+            KnowledgeBase.Save(json);
+        }
+
+        //КОНЕЦ КОСТЫЛЯ
 
         private void doneB_Click(object sender, EventArgs e)
         {
@@ -595,10 +614,10 @@ namespace SBKInterface
             List<Tree> curr_way = null;
             List<List<Tree>> a = Tree.GetPath(mainTree,ref way, ref curr_way);
 
-            List<string> id_konsikventi = new List<string>();
-            List<string> var_konsikventi = new List<string>();
-            List<string> id_antisidenti = new List<string>();
-            List<string> var_antisidenti = new List<string>();
+            id_konsikventi = new List<string>();
+            var_konsikventi = new List<string>();
+            id_antisidenti = new List<string>();
+            var_antisidenti = new List<string>();
 
             foreach (List<Tree> i in a)
             {
@@ -648,6 +667,7 @@ namespace SBKInterface
                 }
             }
 
+            SaveRules();
             PrintTreeInFile(doneTree);
             this.Hide();
             var form2 = new Form2();
