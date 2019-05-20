@@ -52,10 +52,10 @@ namespace SBKInterface
         {
             if(textBox.Text.Length > 2)
             {
-                StringList.Add(textBox.Text);
-                textBox.Clear();
+                StringList.Add(textBox.Text);                
                 KnowledgeBase.Read();
                 CallAndPrintInference(textBox.Text, KnowledgeBase.antId, KnowledgeBase.antVals, KnowledgeBase.consId, KnowledgeBase.consVals);
+                textBox.Clear();
             }
         }
 

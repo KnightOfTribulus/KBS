@@ -30,9 +30,10 @@ namespace SBKInterface
             consVals = rules[3];            
         }
 
-        public static void Save(string input)
+        public static void Save(List<List<string>> input)
         {
-            File.WriteAllText(filepath, input);
+            var json = JsonConvert.SerializeObject(input, Formatting.Indented);
+            File.WriteAllText(filepath, json);
         }
     }
 }

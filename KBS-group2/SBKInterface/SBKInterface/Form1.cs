@@ -595,15 +595,17 @@ namespace SBKInterface
         public List<string> id_antisidenti { get; set; }
         public List<string> var_antisidenti { get; set; }
 
+        public List<List<string>> data { get; set; }
+
         public void SaveRules()
+
         {
-            var toSave = new List<List<string>>();
-            toSave.Add(id_antisidenti);
-            toSave.Add(var_antisidenti);
-            toSave.Add(id_konsikventi);
-            toSave.Add(var_konsikventi);
-            var json = JsonConvert.SerializeObject(toSave, Formatting.Indented);
-            KnowledgeBase.Save(json);
+            data = new List<List<string>>();
+            data.Add(id_antisidenti);
+            data.Add(var_antisidenti);
+            data.Add(id_konsikventi);
+            data.Add(var_konsikventi);
+            KnowledgeBase.Save(data);
         }
 
         //КОНЕЦ КОСТЫЛЯ
@@ -614,10 +616,12 @@ namespace SBKInterface
             List<Tree> curr_way = null;
             List<List<Tree>> a = Tree.GetPath(mainTree,ref way, ref curr_way); // получаем все пути дерева
 
-            List<string> id_konsikventi = new List<string>(); // тут все очевидно
-            List<string> var_konsikventi = new List<string>();
-            List<string> id_antisidenti = new List<string>();
-            List<string> var_antisidenti = new List<string>();
+            id_konsikventi = new List<string>(); // тут все очевидно
+            var_konsikventi = new List<string>();
+            id_antisidenti = new List<string>();
+            var_antisidenti = new List<string>();
+
+            
 
             foreach (List<Tree> i in a) // для каждого из путей
             {
@@ -686,6 +690,7 @@ namespace SBKInterface
 
                 }
             }
+            
 
             SaveRules();
             PrintTreeInFile(doneTree);
