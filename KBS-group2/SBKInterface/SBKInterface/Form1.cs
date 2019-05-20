@@ -639,7 +639,7 @@ namespace SBKInterface
                             {
 
                                 infCount++; // увеличиваем число для конкатенации рандомного номера промежуточного условия-вывода
-                                id_antisidenti.Add("промежуточное условие " + infCount.ToString()); // тут понятно
+                                id_antisidenti.Add("промежуточный выовод " + infCount.ToString()); // тут понятно
                                 var_antisidenti.Add("промежуточный");
 
                                 id_konsikventi.Add("промежуточный выовод " + infCount.ToString());
