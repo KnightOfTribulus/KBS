@@ -611,7 +611,7 @@ namespace SBKInterface
 
                         if (j.IsClause == true)
                         {
-                            count += 1;
+                           
                             if ((count % 3 == 0) && (count != 0))
                             {
                                 infCount++;
@@ -623,7 +623,7 @@ namespace SBKInterface
 
                                 count++;
                             }
-
+                            count += 1;
                             string[] tmp = j.Text.Split('-');
 
                             id_konsikventi.Add(tmp[0]);
