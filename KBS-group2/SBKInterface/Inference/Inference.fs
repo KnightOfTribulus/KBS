@@ -24,7 +24,7 @@
                     
                     if (this.ant1.IsSome && this.ant1.Value = fact) then matcher (Some fact) this.ant2 this.ant3 //1
                     elif (this.ant2.IsSome && this.ant2.Value = fact) then matcher this.ant1 (Some fact) this.ant3 //2
-                    elif (this.ant3.IsSome && this.ant3.Value = fact) then matcher this.ant1 this.ant3 (Some fact) //3
+                    elif (this.ant3.IsSome && this.ant3.Value = fact) then matcher this.ant1 this.ant2 (Some fact) //3
                     else false
         
         //Class constructor takes sequences that represents rules
