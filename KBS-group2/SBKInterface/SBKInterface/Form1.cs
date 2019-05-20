@@ -612,54 +612,74 @@ namespace SBKInterface
         {
             List<List<Tree>> way = null;
             List<Tree> curr_way = null;
-            List<List<Tree>> a = Tree.GetPath(mainTree,ref way, ref curr_way);
+            List<List<Tree>> a = Tree.GetPath(mainTree,ref way, ref curr_way); // получаем все пути дерева
 
-            id_konsikventi = new List<string>();
-            var_konsikventi = new List<string>();
-            id_antisidenti = new List<string>();
-            var_antisidenti = new List<string>();
+            List<string> id_konsikventi = new List<string>(); // тут все очевидно
+            List<string> var_konsikventi = new List<string>();
+            List<string> id_antisidenti = new List<string>();
+            List<string> var_antisidenti = new List<string>();
 
-            foreach (List<Tree> i in a)
+            foreach (List<Tree> i in a) // для каждого из путей
             {
-                int count = 0;
-                int infCount = 0;
-                foreach (Tree j in i)
+                int count = 0; // подсчитывает число антецендентов (для того, чтобы регулировать кратность трем)
+                int infCount = 0; // переменная для конкатенации рандомного номера промежуточного условия-вывода
+                foreach (Tree j in i)  // для каждого дерева в пути
                 {
-                    if (j.Text != null)
+                    if (j.Text != null) // если у дерева есть текст с которым можно работать
                     {
 
-                        if (j.IsClause == true)
+                        if (j.IsClause == true) // если это условие
                         {
                            
-                            if ((count % 3 == 0) && (count != 0))
+                            if ((count % 3 == 0) && (count != 0)) // если число условий кратно трем и мы не на первом обходе
                             {
-                                infCount++;
-                                id_antisidenti.Add("промежуточный выовод " + infCount.ToString());
+
+                                infCount++; // увеличиваем число для конкатенации рандомного номера промежуточного условия-вывода
+                                id_antisidenti.Add("промежуточное условие " + infCount.ToString()); // тут понятно
                                 var_antisidenti.Add("промежуточный");
 
                                 id_konsikventi.Add("промежуточный выовод " + infCount.ToString());
                                 var_konsikventi.Add("промежуточный");
 
-                                count++;
+                                count++; // +1 к числу вхождений условий
                             }
-                            count += 1;
-                            string[] tmp = j.Text.Split('-');
+                            count += 1; // +1 к числу вхождений условий
+                            string[] tmp = j.Text.Split('-'); // разбиваем сплитом по -
 
+                            Tree pr = j.Prev; // предок 
+                            if(pr != null)  // если не в первом обходе
+                            {
+                                if (pr.Left == j) // если левая ветвь предка - наше дерево
+                                { // мы в отрицательном исходе
+                                    id_antisidenti.Add(tmp[0]);
+                                    var_antisidenti.Add("Не " + tmp[1]);
+                                }
+                                else
+                                {// мы в положительном исходе
+                                    id_antisidenti.Add(tmp[0]);
+                                    var_antisidenti.Add(tmp[1]);
+                                }
+
+                            }
+                            else // если в первый раз, то просто занесем
+                            { 
+                                id_antisidenti.Add(tmp[0]);
+                                var_antisidenti.Add(tmp[1]);
+                            }
+
+                        }
+                        else // если вывод
+                        { // если число условий (антецендентов не кратно 3 в тот момент, как мы дошли до вывода)
+                            while (count % 3 != 0) // пока оно не станет кратно 3м
+                            {
+                                id_antisidenti.Add(null); // добавляем нулевой антицендент
+                                var_antisidenti.Add(null);
+                                count += 1; // прибавляем к общему числу
+                            }
+                            count = 0; // обнуляем счетчик
+                            string[] tmp = j.Text.Split('-'); // сплитим вывод по - 
                             id_konsikventi.Add(tmp[0]);
                             var_konsikventi.Add(tmp[1]);
-                        }
-                        else
-                        {
-                            while (count % 3 != 0)
-                            {
-                                id_konsikventi.Add(null);
-                                var_konsikventi.Add(null);
-                                count += 1;
-                            }
-                            count = 0;
-                            string[] tmp = j.Text.Split('-');
-                            id_antisidenti.Add(tmp[0]);
-                            var_antisidenti.Add(tmp[1]);
 
                         }
                     }
