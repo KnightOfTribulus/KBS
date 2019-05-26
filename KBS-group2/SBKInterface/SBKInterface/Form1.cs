@@ -623,8 +623,11 @@ namespace SBKInterface
 
             
 
-            foreach (List<Tree> i in a) // для каждого из путей
+foreach (List<Tree> i in a) // для каждого из путей
             {
+                List<string> root = null; // буффер для корня
+                root = new List<string>();
+
                 int count = 0; // подсчитывает число антецендентов (для того, чтобы регулировать кратность трем)
                 int infCount = 0; // переменная для конкатенации рандомного номера промежуточного условия-вывода
                 foreach (Tree j in i)  // для каждого дерева в пути
@@ -653,6 +656,11 @@ namespace SBKInterface
                             Tree pr = j.Prev; // предок 
                             if(pr != null)  // если не в первом обходе
                             {
+                                if ((pr.Left == j) && (pr.Prev == null))
+                                { // если мы в отрицательном исходе и наш предок - корень 
+                                    id_antisidenti.Add(root[0]); // заносим значения из буфера для корня
+                                    var_antisidenti.Add("Не " + root[1]);
+                                }
                                 if (pr.Left == j) // если левая ветвь предка - наше дерево
                                 { // мы в отрицательном исходе
                                     id_antisidenti.Add(tmp[0]);
@@ -660,15 +668,20 @@ namespace SBKInterface
                                 }
                                 else
                                 {// мы в положительном исходе
-                                    id_antisidenti.Add(tmp[0]);
+                                    if (pr.Prev == null)
+                                    {
+                                        id_antisidenti.Add(root[0]); // заносим значения из буффера для корня
+                                        var_antisidenti.Add(root[1]);
+                                    }
+                                    id_antisidenti.Add(tmp[0]); // заносим значения в буффер для корня
                                     var_antisidenti.Add(tmp[1]);
                                 }
 
                             }
-                            else // если в первый раз, то просто занесем
-                            { 
-                                id_antisidenti.Add(tmp[0]);
-                                var_antisidenti.Add(tmp[1]);
+                            else
+                            {
+                                root.Add(tmp[0]); 
+                                root.Add(tmp[1]);
                             }
 
                         }
