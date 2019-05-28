@@ -97,7 +97,10 @@
                             if rule.IsActive all_facts then
                                 if rule.IsFinal(rules) then Some rule.cons
                                 else
-                                    all_facts <- (all_facts |> List.map(fun el -> if el.variable = rule.cons.variable then rule.cons else el))
+                                    if all_facts |> List.tryFind (fun el -> el.variable = rule.cons.variable) = None then 
+                                        all_facts <- (rule.cons :: all_facts)
+                                    else 
+                                        all_facts <- (all_facts |> List.map(fun el -> if el.variable = rule.cons.variable then rule.cons else el))
                                     infer (tail @ [rule.cons]) result
                             else infer tail result
                         | None -> infer tail result
