@@ -11,7 +11,7 @@ namespace SBKInterface
     public static class KnowledgeBase
     {
         public static string filepath = "Resources/rules.json";
-        private static string debugfile = "Resources/debug.txt";
+        
         public static List<string> antId { get; set; }
 
         public static List<string> antVals { get; set; }

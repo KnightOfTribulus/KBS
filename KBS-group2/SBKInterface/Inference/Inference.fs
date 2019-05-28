@@ -62,7 +62,7 @@
                         let FactsSeq =                             
                             seq{
                                 for ind in [0..2] do
-                                    match antId_Triples.[triple_ind].[ind] with
+                                    match antId_Triples.[triple_ind].[ind] with //!!!
                                     | null -> yield None 
                                     | _ -> yield Some {variable = antId_Triples.[triple_ind].[ind]; value = antVal_Triples.[triple_ind].[ind]}                                        
                             }
@@ -87,19 +87,23 @@
                 
             member public __.Infer(input : string) =    //bad parameters, 1 string parsing
                 let rules = Seq.toList RulesSeq
-                let initial_facts = ParseToFacts input                
+                let mutable all_facts = ParseToFacts input                
                 
                 let rec infer (queue : Fact list) (result : Fact option) =
                     match queue with 
                     | head :: tail -> 
                         match rules |> List.tryFind(fun el -> el.Contains(head)) with 
                         | Some rule ->  
-                            if rule.IsFinal(rules) then Some rule.cons
-                            else infer (tail @ [rule.cons]) result
+                            if rule.IsActive all_facts then
+                                if rule.IsFinal(rules) then Some rule.cons
+                                else
+                                    all_facts <- (all_facts |> List.map(fun el -> if el.variable = rule.cons.variable then rule.cons else el))
+                                    infer (tail @ [rule.cons]) result
+                            else infer tail result
                         | None -> infer tail result
                     | [] -> result
 
-                let res = infer initial_facts None                      
+                let res = infer all_facts None                      
                 match res with 
                 | None -> defaultInference
                 | Some cons -> cons.variable + " " + cons.value
@@ -108,11 +112,13 @@
         let public MakeInference(facts: string, antIds : string seq, antVals : string seq, consIds : string seq, consVals : string seq) =
             
             let l = [antIds; antVals; consIds; consVals]
-            let j = JsonConvert.SerializeObject(l)
+
+            let j = JsonConvert.SerializeObject(l, Formatting.Indented)
             File.WriteAllText("Resources/output.json",j)
 
-            let jf = JsonConvert.SerializeObject(facts)
+            let jf = JsonConvert.SerializeObject(facts, Formatting.Indented)
             File.WriteAllText("Resources/facts.json",jf)
+
             let mech = new Mechanism(antIds, antVals, consIds, consVals)
             let result = mech.Infer(facts)
             result
