@@ -657,7 +657,7 @@ foreach (List<Tree> i in a) // для каждого из путей
                             if(pr != null)  // если не в первом обходе
                             {
                                 if ((pr.Left == j) && (pr.Prev == null))
-                                { // если мы в отрицательном исходе и наш предок - корень 
+                                { // если мы в отрицательном исходе и наш предок - корень (самый верх дерева) 
                                     id_antisidenti.Add(root[0]); // заносим значения из буфера для корня
                                     var_antisidenti.Add("Не " + root[1]);
                                 }
@@ -673,7 +673,7 @@ foreach (List<Tree> i in a) // для каждого из путей
                                         id_antisidenti.Add(root[0]); // заносим значения из буффера для корня
                                         var_antisidenti.Add(root[1]);
                                     }
-                                    id_antisidenti.Add(tmp[0]); // заносим значения в буффер для корня
+                                    id_antisidenti.Add(tmp[0]); 
                                     var_antisidenti.Add(tmp[1]);
                                 }
 
@@ -687,6 +687,17 @@ foreach (List<Tree> i in a) // для каждого из путей
                         }
                         else // если вывод
                         { // если число условий (антецендентов не кратно 3 в тот момент, как мы дошли до вывода)
+                            Tree pr = j.Prev; // предок 
+                            if ((pr.Left == j) && (pr.Prev == null))
+                            { // если мы в отрицательном исходе и наш предок - корень (самый верх дерева) 
+                                id_antisidenti.Add(root[0]); // заносим значения из буфера для корня
+                                var_antisidenti.Add("Не " + root[1]);
+                            }
+                            if ((pr.Right == j) && (pr.Prev == null))
+                            { // если мы в положительном исходе и наш предок - корень (самый верх дерева) 
+                                id_antisidenti.Add(root[0]); // заносим значения из буфера для корня
+                                var_antisidenti.Add(root[1]);
+                            }
                             while (count % 3 != 0) // пока оно не станет кратно 3м
                             {
                                 id_antisidenti.Add(null); // добавляем нулевой антицендент
